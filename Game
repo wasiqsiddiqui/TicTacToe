@@ -1,0 +1,165 @@
+// TicTacToe.cpp : Defines the entry point for the console application.
+//
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <sstream>
+using namespace std;
+
+void printBoard(vector<vector<char>> drawBoard) {
+    
+    cout << drawBoard.at(0).at(0) << " " << drawBoard.at(0).at(1) << " " << drawBoard.at(0).at(2) << endl;
+    cout << drawBoard.at(1).at(0) << " " << drawBoard.at(1).at(1) << " " << drawBoard.at(1).at(2) << endl;
+    cout << drawBoard.at(2).at(0) << " " << drawBoard.at(2).at(1) << " " << drawBoard.at(2).at(2) << endl;
+}
+
+bool locationInRange(vector<vector<char>> drawBoard, int row, int column) { //Checks to see if range
+    
+    if ((row < 1 || row > 3) || (column < 1 || column > 3)){
+        return false;
+    }
+    
+    else {
+        return true;
+    }
+}
+
+bool locationTaken(vector<vector<char>> drawBoard, int row, int column) {
+    if(drawBoard.at(row-1).at(column-1) != '_'){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+void getLocation(vector<vector<char>> drawBoard, int &row, int &column, char player) { //Gets location from user
+    
+   	do {
+        
+        do{
+            
+            cout << "Enter location for " << player << " ";
+            cin >> row;
+            cin >> column;
+            
+            if (!locationInRange(drawBoard, row, column)){
+                cout << "Invalid location. Numbers must be between 1 and 3. " << endl;
+            }
+            
+        } while (!locationInRange(drawBoard, row, column));
+        
+        if (locationTaken(drawBoard, row, column)){
+            cout << "Location already taken. " << endl;
+        }
+        
+    } while (!locationInRange(drawBoard, row, column) || locationTaken(drawBoard, row, column));
+    
+}
+
+char checkWin(vector<vector<char>> drawBoard) {
+    //Horizontal
+    if (drawBoard.at(0).at(0) != '_' && drawBoard.at(0).at(1) == drawBoard.at(0).at(0) && drawBoard.at(0).at(2) == drawBoard.at(0).at(0)) { //Horizontal Row 1
+        return drawBoard.at(0).at(0);
+    }
+    else if (drawBoard.at(1).at(0) != '_' && drawBoard.at(1).at(1) == drawBoard.at(1).at(0) && drawBoard.at(1).at(2) == drawBoard.at(1).at(0)) { //Horizontal Row 2
+        return drawBoard.at(1).at(0);
+    }
+    else if (drawBoard.at(2).at(0) != '_' && drawBoard.at(2).at(1) == drawBoard.at(2).at(0) && drawBoard.at(2).at(2) == drawBoard.at(2).at(0)) { //Horizontal Row 3
+        return drawBoard.at(2).at(0);
+    }
+    
+    //Vertical
+    else if (drawBoard.at(0).at(0) != '_' && drawBoard.at(1).at(0) == drawBoard.at(0).at(0) && drawBoard.at(2).at(0) == drawBoard.at(0).at(0)) { //Vertical Column 1
+        return drawBoard.at(0).at(0);
+    }
+    else if (drawBoard.at(0).at(1) != '_' && drawBoard.at(1).at(1) == drawBoard.at(0).at(1) && drawBoard.at(2).at(1) == drawBoard.at(0).at(1)) { //Vertical Column 2
+        return drawBoard.at(0).at(1);
+    }
+    else if (drawBoard.at(0).at(2) != '_' && drawBoard.at(1).at(2) == drawBoard.at(0).at(2) && drawBoard.at(2).at(2) == drawBoard.at(0).at(2)) { //Vertical Column 3
+        return drawBoard.at(0).at(2);
+    }
+    
+    //Diagnol
+    else if (drawBoard.at(0).at(2) != '_' && drawBoard.at(1).at(1) == drawBoard.at(0).at(2) && drawBoard.at(2).at(0) == drawBoard.at(0).at(2)) { //Diagnol 1
+        return drawBoard.at(0).at(2);
+    }
+    else if (drawBoard.at(0).at(0) != '_' && drawBoard.at(1).at(1) == drawBoard.at(0).at(0) && drawBoard.at(2).at(2) == drawBoard.at(0).at(0)) { //Dianol 2
+        return drawBoard.at(0).at(0);
+    }
+    //Tie
+    else if (drawBoard.at(0).at(0) != '_' && drawBoard.at(0).at(1) != '_' && drawBoard.at(0).at(2) != '_' && drawBoard.at(1).at(0) != '_' && drawBoard.at(1).at(1) != '_' && drawBoard.at(1).at(2) != '_' && drawBoard.at(2).at(0) != '_' && drawBoard.at(2).at(1) != '_' && drawBoard.at(2).at(2) != '_'){
+        return 'T';
+    }
+    
+    else {
+        return ' ';
+    }
+}
+
+/////Main
+int main()
+{
+   	int boardSize = 3;
+    int move=0;
+    char letter = 'x';
+    int column;
+    int row;
+    int moveTurn;
+    
+    vector<vector<char>> drawBoard;
+    vector<char> underscore;
+    
+    for (int i = 0; i < boardSize; i++){
+        for (int j = 0; j < boardSize; j++){
+            underscore.push_back('_'); //Pushing back values to create table
+        }
+        drawBoard.push_back(underscore);
+        underscore.clear();
+        
+    }
+    
+    cout << "Welcome to Tic Tac Toe" << endl;
+    
+    printBoard(drawBoard); //Prints board
+    
+    do {
+        
+        ++move;
+        moveTurn = move % 2;
+        switch (moveTurn) {
+                
+            case 0:
+                letter = 'O';
+                break;
+                
+            case 1:
+                letter = 'X';
+                break;
+        }
+        
+        
+        getLocation(drawBoard, row, column, letter);
+        
+        drawBoard.at(row - 1).at(column - 1) = letter; //User has choice 1-3, Vector is created 0-2
+        
+        printBoard(drawBoard);
+        
+    } while (checkWin(drawBoard) == ' ');
+    
+    if (checkWin(drawBoard) == 'X'){
+        cout << "X Won!!!";
+    }
+    
+    else if (checkWin(drawBoard) == 'O'){
+        cout << "O Won!!!";
+    }
+    
+    else if (checkWin(drawBoard) == 'T'){
+        cout << "Cat!!!"; //Tie Game
+    }
+    
+}
